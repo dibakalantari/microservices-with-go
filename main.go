@@ -8,31 +8,26 @@ import (
 	"os/signal"
 	"testModule/handlers"
 	"time"
+
+	"github.com/gorilla/mux"
 )
 
 func main() {
-	// -------------- First edition of the code before refactoring:
-	// http.HandleFunc("/", func(rw http.ResponseWriter, r *http.Request) {
-	// log.Println("Initial Commit")
-	// d, err := io.ReadAll(r.Body)
-
-	// if err != nil {
-	// 	http.Error(rw, "Error happened", http.StatusBadRequest)
-	// 	return
-	// }
-	// fmt.Fprintf(rw, "Input %s", d)
-	// })
-
-	// http.ListenAndServe(":9090", serveMux)
-
-	// -------------- Refactored version using hello handler
 	l := log.New(os.Stdout, "products-api", log.LstdFlags)
 
 	// Create the handlers
 	productHandler := handlers.NewProducts(l)
 
-	serveMux := http.NewServeMux()
-	serveMux.Handle("/", productHandler)
+	serveMux := mux.NewRouter()
+	
+	getRouter := serveMux.Methods(http.MethodGet).Subrouter()
+	getRouter.HandleFunc("/", productHandler.GetProducts)
+
+	putRouter := serveMux.Methods(http.MethodPut).Subrouter()
+	putRouter.HandleFunc("/{id:[0-9]+}", productHandler.UpdateProducts)
+
+	postRouter := serveMux.Methods(http.MethodPost).Subrouter()
+	postRouter.HandleFunc("/", productHandler.AddProduct)
 
 	// Create a new server
 	server := &http.Server{
