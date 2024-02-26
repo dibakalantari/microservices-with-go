@@ -11,6 +11,10 @@ import (
 )
 
 type Product struct {
+	// the id for this user
+	// 
+	// required: true
+	// min: 1
 	ID          int     `json:"id"`
 	Name        string  `json:"name" validate:"required"`
 	Description string  `json:"description"`
@@ -73,6 +77,18 @@ func UpdateProduct(id int, p *Product) error {
 
 	p.ID = id
 	productList[pos] = p
+	return nil
+}
+
+func DeleteProduct(id int) error {
+	_, pos, err := FindProduct(id)
+
+	if err != nil {
+		return err
+	}
+
+	productList = append(productList[:pos], productList[pos+1])
+
 	return nil
 }
 

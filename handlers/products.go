@@ -1,3 +1,16 @@
+// Package handlers of Product API
+// 
+// Product API
+//
+// Schemes: http
+// BasePath: /
+// Version: 1.0.0
+//
+// Consumes:
+// - application/json
+// Produces:
+// - application/json
+// swagger:meta
 package handlers
 
 import (
@@ -5,11 +18,25 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strconv"
-	"testModule/data"
-
-	"github.com/gorilla/mux"
+	"github.com/dibakalantari/microservices-with-go/data"
 )
+
+// A list of products returns in the response
+// swagger:response productsResponse
+type productsResponseWrapper struct {
+	// All products in the system
+	// in: body
+	Body []data.Product
+}
+
+// delete product in the following line, is the name of the method that is using this id
+// swagger:parameters deleteProduct
+type productIDParameterWrapper struct {
+	// The id of the product to delete from database
+	// in: path
+	// required: true
+	ID int `json:"id"`
+}
 
 // Products is a http.Handler
 type Products struct {
@@ -18,45 +45,6 @@ type Products struct {
 
 func NewProducts(l *log.Logger) *Products {
 	return &Products{l}
-}
-
-func (p *Products) GetProducts(rw http.ResponseWriter, r *http.Request) {
-	listOfProducts := data.GetProducts()
-	// convert to json
-	err := listOfProducts.ToJSON(rw)
-
-	if err != nil {
-		http.Error(rw, "Unable to marshal json", http.StatusInternalServerError)
-	}
-} 
-
-func (p* Products) AddProduct(rw http.ResponseWriter, r *http.Request){
-	p.l.Println("Handle POST Product")
-
-	prod := r.Context().Value(KeyProduct{}).(*data.Product)
-	data.AddProduct(prod)
-}
-
-func (p* Products) UpdateProducts(rw http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
-	if err != nil {
-		http.Error(rw, "Unable to convert", http.StatusBadRequest)
-	}
-
-	p.l.Println("Handle PUT Product")
-	prod := r.Context().Value(KeyProduct{}).(*data.Product)
-
-	err = data.UpdateProduct(id, prod)
-	if err == data.ErrProductNotFound {
-		http.Error(rw, "Product not found", http.StatusBadRequest)
-		return
-	}
-
-	if err != nil {
-		http.Error(rw, "Product not found", http.StatusInternalServerError)
-		return
-	}
 }
 
 type KeyProduct struct{}
