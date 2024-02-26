@@ -21,23 +21,6 @@ import (
 	"github.com/dibakalantari/microservices-with-go/data"
 )
 
-// A list of products returns in the response
-// swagger:response productsResponse
-type productsResponseWrapper struct {
-	// All products in the system
-	// in: body
-	Body []data.Product
-}
-
-// delete product in the following line, is the name of the method that is using this id
-// swagger:parameters deleteProduct
-type productIDParameterWrapper struct {
-	// The id of the product to delete from database
-	// in: path
-	// required: true
-	ID int `json:"id"`
-}
-
 // Products is a http.Handler
 type Products struct {
 	l *log.Logger
