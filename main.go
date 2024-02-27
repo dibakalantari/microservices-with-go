@@ -12,6 +12,7 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/gorilla/mux"
+	gohandlers "github.com/gorilla/handlers"
 )
 
 func main() {
@@ -42,10 +43,13 @@ func main() {
 	getRouter.Handle("/docs", sh)
 	getRouter.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
 
+	// CORS Handlers
+	ch := gohandlers.CORS(gohandlers.AllowedOrigins([]string{"*"}))
+
 	// Create a new server
 	server := &http.Server{
 		Addr:         ":9090",
-		Handler:      serveMux,
+		Handler:      ch(serveMux),
 		IdleTimeout:  120 * time.Second,
 		ReadTimeout:  1 * time.Second,
 		WriteTimeout: 1 * time.Second,
@@ -70,4 +74,5 @@ func main() {
 	timeout := time.Now().Add(30 * time.Second)
 	timeoutContext, _ := context.WithDeadline(context.Background(), timeout)
 	server.Shutdown(timeoutContext) // when we call Shutdown server will not accept any more requests, and let the in progress requests finish then it will shut down the server
+
 }
