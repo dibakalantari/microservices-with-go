@@ -46,6 +46,10 @@ func main() {
 	// CORS Handlers
 	ch := gohandlers.CORS(gohandlers.AllowedOrigins([]string{"*"}))
 
+	// filename regex: {filename:[a-zA-Z]+\\.[a-z]{3}}
+	ph := serveMux.Get(http.MethodPost).Subrouter()
+	ph.HandleFunc("/images/{id:[0-9]+}/{filename:[a-zA-Z]+\\.[a-z]{3}}", )
+ 
 	// Create a new server
 	server := &http.Server{
 		Addr:         ":9090",
