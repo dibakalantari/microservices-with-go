@@ -6,7 +6,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/hashicorp/go-hclog"
-	"product-images/product-images/files"
+	"product-images/files"
 )
 
 // Files is a handler for reading and writing files

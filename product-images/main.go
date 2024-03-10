@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"product-images/product-images/files"
-	"product-images/product-images/handlers"
+	"product-images/files"
+	"product-images/handlers"
 	"time"
 
 	"github.com/gorilla/mux"
