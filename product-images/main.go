@@ -13,6 +13,7 @@ import (
 	"github.com/nicholasjackson/env"
 
 	hclog "github.com/hashicorp/go-hclog"
+	gohandlers "github.com/gorilla/handlers"
 )
 
 var bindAddress = env.String("BIND_ADDRESS", false, ":9090", "Bind address for the server")
@@ -42,13 +43,17 @@ func main() {
 
 	// create the handlers
 	fh := handlers.NewFiles(stor, l)
+	mw := handlers.GzipHandler{}
 
 	// create a new serve mux and register the handlers
 	sm := mux.NewRouter()
 
-	// filename regex: {filename:[a-zA-Z]+\\.[a-z]{3}}
+	ch := gohandlers.CORS(gohandlers.AllowedOrigins([]string{"*"}))
+
+	// upload files
 	ph := sm.Methods(http.MethodPost).Subrouter()
-	ph.HandleFunc("/images/{id:[0-9]+}/{filename:[a-zA-Z]+\\.[a-z]{3}}", fh.ServeHTTP)
+	ph.HandleFunc("/images/{id:[0-9]+}/{filename:[a-zA-Z]+\\.[a-z]{3}}", fh.UploadREST)
+	ph.HandleFunc("/", fh.UploadMultipart)
 
 	// get files
 	gh := sm.Methods(http.MethodGet).Subrouter()
@@ -56,11 +61,12 @@ func main() {
 		"/images/{id:[0-9]+}/{filename:[a-zA-Z]+\\.[a-z]{3}}",
 		http.StripPrefix("/images/", http.FileServer(http.Dir(*basePath))),
 	)
+	gh.Use(mw.GzipMiddleware)
 
 	// create a new server
 	s := http.Server{
 		Addr:         *bindAddress,      // configure the bind address
-		Handler:      sm,                // set the default handler
+		Handler:      ch(sm),                // set the default handler
 		ErrorLog:     sl,                // the logger for the server
 		ReadTimeout:  5 * time.Second,   // max time to read request from the client
 		WriteTimeout: 10 * time.Second,  // max time to write response to the client
