@@ -1,4 +1,4 @@
-module currency
+module github.com/dibakalantari/microservices-with-go/currency
 
 go 1.21.5
 

@@ -7,12 +7,13 @@ import (
 	"os"
 	"os/signal"
 	"time"
+	gohandlers "github.com/gorilla/handlers"
+	protos "github.com/dibakalantari/microservices-with-go/currency/currency"
 
 	"github.com/dibakalantari/microservices-with-go/handlers"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/gorilla/mux"
-	gohandlers "github.com/gorilla/handlers"
 )
 
 func main() {
@@ -20,6 +21,9 @@ func main() {
 
 	// Create the handlers
 	productHandler := handlers.NewProducts(l)
+
+	// Create Client
+	protos.NewCurrencyClient()
 
 	serveMux := mux.NewRouter()
 	

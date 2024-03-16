@@ -2,7 +2,7 @@ package server
 
 import (
 	"context"
-	protos "currency/currency"
+	protos "github.com/dibakalantari/microservices-with-go/currency/currency"
 )
 
 // Currency is a gRPC server it implements the methods defined by the CurrencyServer interface

@@ -1,8 +1,8 @@
 package main
 
 import (
-	protos "currency/currency"
-	"currency/server"
+	protos "github.com/dibakalantari/microservices-with-go/currency/currency"
+	"github.com/dibakalantari/microservices-with-go/currency/server"
 	"net"
 	"os"
 
