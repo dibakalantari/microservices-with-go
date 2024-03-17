@@ -1,5 +1,5 @@
 syntax = "proto3";
-option go_package="/currency"; // modulename/packagename
+option go_package="/currency";
 
 service Currency {
     rpc GetRate(RateRequest) returns (RateResponse);

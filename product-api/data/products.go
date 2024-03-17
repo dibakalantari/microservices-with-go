@@ -86,6 +86,15 @@ func AddProduct(p *Product) {
 	productList = append(productList,p)
 }
 
+func GetProductByID(id int) (*Product, error) {
+	i := findIndexByProductID(id)
+	if id == -1 {
+		return nil, ErrProductNotFound
+	}
+
+	return productList[i], nil
+}
+
 func UpdateProduct(id int, p *Product) error {
 	_, pos, err := FindProduct(id)
 
@@ -108,6 +117,18 @@ func DeleteProduct(id int) error {
 	productList = append(productList[:pos], productList[pos+1])
 
 	return nil
+}
+
+// findIndex finds the index of a product in the database
+// returns -1 when no product can be found
+func findIndexByProductID(id int) int {
+	for i, p := range productList {
+		if p.ID == id {
+			return i
+		}
+	}
+
+	return -1
 }
 
 var ErrProductNotFound = fmt.Errorf("Product not found")

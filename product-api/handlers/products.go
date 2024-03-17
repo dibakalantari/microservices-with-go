@@ -1,6 +1,6 @@
 // Package handlers of Product API
-// 
-// Product API
+//
+// # Product API
 //
 // Schemes: http
 // BasePath: /
@@ -18,16 +18,21 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"github.com/dibakalantari/microservices-with-go/data"
+	"strconv"
+
+	protos "github.com/dibakalantari/microservices-with-go/currency/currency"
+	"github.com/dibakalantari/microservices-with-go/product-api/data"
+	"github.com/gorilla/mux"
 )
 
 // Products is a http.Handler
 type Products struct {
 	l *log.Logger
+	cc protos.CurrencyClient
 }
 
-func NewProducts(l *log.Logger) *Products {
-	return &Products{l}
+func NewProducts(l *log.Logger, cc protos.CurrencyClient) *Products {
+	return &Products{l, cc}
 }
 
 type KeyProduct struct{}
@@ -56,4 +61,27 @@ func (p Products) MiddlewareValidateProduct(next http.Handler) http.Handler {
 
 		next.ServeHTTP(rw, req)
 	})
+}
+
+// getProductID returns the product ID from the URL
+// Panics if cannot convert the id into an integer
+// this should never happen as the router ensures that
+// this is a valid number
+func getProductID(r *http.Request) int {
+	// parse the product id from the url
+	vars := mux.Vars(r)
+
+	// convert the id into an integer and return
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		// should never happen
+		panic(err)
+	}
+
+	return id
+}
+
+// GenericError is a generic error message returned by a server
+type GenericError struct {
+	Message string `json:"message"`
 }

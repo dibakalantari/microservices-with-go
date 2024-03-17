@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"net/http"
-	"github.com/dibakalantari/microservices-with-go/data"
+	"github.com/dibakalantari/microservices-with-go/product-api/data"
 )
 
 func (p* Products) AddProduct(rw http.ResponseWriter, r *http.Request){

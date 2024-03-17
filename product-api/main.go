@@ -7,10 +7,13 @@ import (
 	"os"
 	"os/signal"
 	"time"
-	gohandlers "github.com/gorilla/handlers"
-	protos "github.com/dibakalantari/microservices-with-go/currency/currency"
 
-	"github.com/dibakalantari/microservices-with-go/handlers"
+	protos "github.com/dibakalantari/microservices-with-go/currency/currency"
+	gohandlers "github.com/gorilla/handlers"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+
+	"github.com/dibakalantari/microservices-with-go/product-api/handlers"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/gorilla/mux"
@@ -19,16 +22,23 @@ import (
 func main() {
 	l := log.New(os.Stdout, "products-api", log.LstdFlags)
 
-	// Create the handlers
-	productHandler := handlers.NewProducts(l)
-
+	conn, err := grpc.Dial("localhost:9092", grpc.WithTransportCredentials(insecure.NewCredentials())) // only for non-production environments, on production definitely use https
+	if err != nil {
+		panic(err)
+	}	
+	defer conn.Close()	
 	// Create Client
-	protos.NewCurrencyClient()
+	cc := protos.NewCurrencyClient(conn)
+
+	// Create the handlers
+	productHandler := handlers.NewProducts(l,cc)
 
 	serveMux := mux.NewRouter()
 	
 	getRouter := serveMux.Methods(http.MethodGet).Subrouter()
 	getRouter.HandleFunc("/products", productHandler.ListAll)
+
+	getRouter.HandleFunc("/products/{id:[0-9]+}", productHandler.ListSingle)
 
 	putRouter := serveMux.Methods(http.MethodPut).Subrouter()
 	putRouter.HandleFunc("/products/{id:[0-9]+}", productHandler.UpdateProducts)

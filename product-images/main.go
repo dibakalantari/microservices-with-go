@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"product-images/files"
-	"product-images/handlers"
+	"github.com/dibakalantari/microservices-with-go/product-images/files"
+	"github.com/dibakalantari/microservices-with-go/product-images/handlers"
 	"time"
 
 	"github.com/gorilla/mux"

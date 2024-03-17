@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"strconv"
 
-	"product-images/files"
+	"github.com/dibakalantari/microservices-with-go/product-images/files"
 
 	"github.com/gorilla/mux"
 	"github.com/hashicorp/go-hclog"

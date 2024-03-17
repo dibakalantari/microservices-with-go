@@ -3,7 +3,7 @@ package handlers
 import (
 	"net/http"
 	"strconv"
-	"github.com/dibakalantari/microservices-with-go/data"
+	"github.com/dibakalantari/microservices-with-go/product-api/data"
 
 	"github.com/gorilla/mux"
 )

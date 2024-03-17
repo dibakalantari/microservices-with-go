@@ -1,4 +1,4 @@
-module product-images
+module github.com/dibakalantari/microservices-with-go/product-images
 
 go 1.21.5
 
